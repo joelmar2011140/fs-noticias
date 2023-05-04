@@ -52,13 +52,14 @@ export async function listarUsuarios (): Promise<ISucesso> {
     return {
       retorno: {
         codigo: 204,
-        mensagem: 'Lista retornada com sucesso'
+        mensagem: 'Lista retornada com sucesso',
+        data: usuarios
       }
     }
   }
   return {
     retorno: {
-      codigo: 204,
+      codigo: 200,
       mensagem: 'Lista retornada com sucesso',
       data: usuarios.map(usuario => ({ userId: usuario.userId, nome: usuario.nome, email: usuario.email, papel: usuario.papel }))
     }

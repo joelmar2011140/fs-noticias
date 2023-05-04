@@ -124,7 +124,7 @@ export async function listarUsuarioHttp (req: Request, res: Response, next: Next
 export async function listarUsuariosHttp (req: Request, res: Response, next: NextFunction): Promise<any> {
   try {
     const data = await listarUsuarios()
-    return res.status(data.retorno.codigo).json(data)
+    return res.status(data.retorno.codigo).json(data.retorno.data)
   } catch (err: any) {
     console.error('Erro em listarUsuariosHttp')
     if (err.name === 'APIError') {

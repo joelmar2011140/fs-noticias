@@ -52,7 +52,7 @@ export async function authPublicador (req: any, res: Response, next: NextFunctio
     if (usuario == null) {
       return res.sendStatus(403)
     }
-    if (usuario?.papel !== 'PUBLICADOR') {
+    if (usuario?.papel !== 'PUBLICADOR' && usuario?.papel !== 'ADMIN') {
       return res.sendStatus(403)
     }
     const { senha, ...rest } = usuario as any
