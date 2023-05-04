@@ -8,10 +8,24 @@ datasource db {
 }
 
 model Usuario {
-  userId String @id @default(uuid())
-  email String @unique
-  nome String 
-  papel Papel @default(PUBLICADOR)
+  userId  String    @id @default(uuid())
+  email   String    @unique
+  nome    String
+  senha   String
+  papel   Papel     @default(PUBLICADOR)
+  Noticia Noticia[]
+}
+
+model Noticia {
+  noticiaId     String   @id @default(uuid())
+  titulo        String
+  destaque      String
+  status        Boolean  @default(false)
+  capa          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  publicador    Usuario  @relation(fields: [usuarioUserId], references: [userId])
+  usuarioUserId String
 }
 
 enum Papel {
