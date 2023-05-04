@@ -6,6 +6,6 @@ export const rotasAuth = Router()
 
 rotasAuth.post('/login', loginUsuarioHttp)
 rotasAuth.get('/perfil', authUser, perfiUsuario)
-rotasAuth.post('/update-password', authUser, atualizarSenhaUsuarioHttp)
+rotasAuth.patch('/update-password', authUser, atualizarSenhaUsuarioHttp)
 rotasAuth.post('/generateKey', generateKeyHttp)
 rotasAuth.post('/grant-access', authAPI, grantAcessHttp)
