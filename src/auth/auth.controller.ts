@@ -75,6 +75,8 @@ export async function generateKeyHttp (req: any, res: Response, next: NextFuncti
       for (const detalhe of err.details) {
         next(new APIError('CLIENT_ERROR', detalhe.message, 422))
       }
+    } if (err.code === 'P2002') {
+      next(new APIError('BAD_REQUEST', 'Não pode gerar novamente uma chave', 409))
     }
     next(err)
   }
@@ -89,11 +91,11 @@ export async function grantAcessHttp (req: any, res: Response, next: NextFunctio
     }
     const userKey = await prismaClient.userKeys.findUnique({ where: { key: req.body.key } })
     if (userKey == null) {
-      return res.sendStatus(403)
+      const key = randomBytes(12).toString('hex')
+      await prismaClient.userKeys.create({ data: { key, userEmail: req.body.email } })
+      return res.status(201).json(key)
     }
-    const key = randomBytes(12).toString('hex')
-    await prismaClient.userKeys.create({ data: { key, userEmail: req.body.email } })
-    return res.status(201).json(key)
+    return res.sendStatus(201)
   } catch (err: any) {
     console.error('Erro em grantAcessHttp')
     if (err.name === 'APIError') {

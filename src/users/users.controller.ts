@@ -47,7 +47,7 @@ export async function registarUsuarioHttp (req: Request, res: Response, next: Ne
         next(new APIError('CLIENT_ERROR', detalhe.message, 422))
       }
     } if (err.code === 'P2002') {
-      next(new APIError('BAD_REQUEST', 'Já existe uma categoria com este nome', 400))
+      next(new APIError('BAD_REQUEST', 'Já existe um usuário associado à estes dados', 400))
     } if (err.name === 'APIError') {
       next(err)
     }
@@ -73,7 +73,7 @@ export async function registarUsuarioAdminHttp (req: Request, res: Response, nex
         next(new APIError('CLIENT_ERROR', detalhe.message, 422))
       }
     } if (err.code === 'P2002') {
-      next(new APIError('BAD_REQUEST', 'Já existe uma categoria com este nome', 400))
+      next(new APIError('BAD_REQUEST', 'Já existe um usuário associado à estes dados', 409))
     } if (err.name === 'APIError') {
       next(err)
     }
