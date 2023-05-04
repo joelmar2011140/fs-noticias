@@ -15,7 +15,12 @@ export async function registarUsuario (params: IParamsCriarUsuario): Promise<ISu
     retorno: {
       codigo: 201,
       mensagem: 'Usuário registado com sucesso',
-      data
+      data: {
+        userId: data.userId,
+        email: data.email,
+        nome: data.nome,
+        papel: data.papel
+      }
     }
   }
 }

@@ -21,7 +21,7 @@ export function verificarToken (token: string): any {
     const data = JWT.verify(token, process.env.JWT_KEY as string)
     return data
   } catch (err: any) {
-    console.log('Erro em verificarToken')
+    console.log('Erro em verificarToken', err)
     throw new APIError('SERVER_ERROR', 'Aconteceu um erro inesperado no servidor, tente mais tarde , caso o erro persistir contacte a equipa de suporte', 503)
   }
 }

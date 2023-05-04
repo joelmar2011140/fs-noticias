@@ -1,8 +1,8 @@
 import { createServer } from 'http'
 import dotenv from 'dotenv'
 import { app } from './app/app'
-import cluster from 'cluster'
-import { cpus } from 'os'
+// import cluster from 'cluster'
+// import { cpus } from 'os'
 
 dotenv.config()
 
@@ -16,11 +16,13 @@ export function startServer (): void {
 }
 
 // Clusterizando a API
-if (cluster.isPrimary) {
-  const totalCpus = cpus().length
-  for (let iterador = 0; iterador < totalCpus; iterador++) {
-    cluster.fork()
-  }
-} else {
-  startServer()
-}
+// if (cluster.isPrimary) {
+//   const totalCpus = cpus().length
+//   for (let iterador = 0; iterador < totalCpus; iterador++) {
+//     cluster.fork()
+//   }
+// } else {
+//   startServer()
+// }
+
+startServer()
