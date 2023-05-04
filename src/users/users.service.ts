@@ -2,9 +2,12 @@ import { prismaUser } from './users.prisma'
 import type { ISucesso } from '../utils/global.types'
 import { APIError } from '../utils/error.class'
 import type { IParamsAtualizarUsuario, IParamsCriarUsuario } from './users.types'
+import { encriptarSenha } from '../helpers/bcrypt.function'
 
 export async function registarUsuario (params: IParamsCriarUsuario): Promise<ISucesso> {
-  const data = await prismaUser.create({ data: { ...params } })
+  const { senha, ...rest } = params
+  const senhaEncriptada = await encriptarSenha(params.senha)
+  const data = await prismaUser.create({ data: { ...rest, senha: senhaEncriptada } })
   if (data == null) {
     throw new APIError('APIERROR', 'Não foi possível registar este usuário , tente novamente, se o erro persistir contacte a equipa de suporte', 503)
   }
@@ -31,7 +34,7 @@ export async function listarUsuarios (): Promise<ISucesso> {
     retorno: {
       codigo: 204,
       mensagem: 'Lista retornada com sucesso',
-      data: usuarios
+      data: usuarios.map(usuario => ({ userId: usuario.userId, nome: usuario.nome, email: usuario.email, papel: usuario.papel }))
     }
   }
 }
@@ -41,11 +44,12 @@ export async function eliminarUsuario (userId: string): Promise<ISucesso> {
   if (usuarioEliminado == null) {
     throw new APIError('CLIENT_ERROR', 'Certifique-se por favor que selecionou o usuário correto', 404)
   }
+  const { senha, ...rest } = usuarioEliminado
   return {
     retorno: {
       codigo: 200,
       mensagem: 'Usuário eliminado com sucesso',
-      data: usuarioEliminado
+      data: rest
     }
   }
 }
@@ -55,11 +59,12 @@ export async function listarUmUsuario (userId: string): Promise<ISucesso> {
   if (usuario == null) {
     throw new APIError('CLIENT_ERROR', 'Certifique-se por favor que selecionou o usuário correto', 404)
   }
+  const { senha, ...rest } = usuario
   return {
     retorno: {
       codigo: 200,
       mensagem: 'Usuário listado com sucesso',
-      data: usuario
+      data: rest
     }
   }
 }
@@ -69,11 +74,12 @@ export async function atualizarUmUsuario (userId: string, params: IParamsAtualiz
   if (usuarioAtualizado == null) {
     throw new APIError('CLIENT_ERROR', 'Certifique-se por favor que selecionou o usuário correto', 404)
   }
+  const { senha, ...rest } = usuarioAtualizado
   return {
     retorno: {
       codigo: 201,
       mensagem: 'Usuário atualizado com sucesso',
-      data: usuarioAtualizado
+      data: rest
     }
   }
 }
