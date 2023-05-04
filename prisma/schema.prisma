@@ -28,6 +28,12 @@ model Noticia {
   usuarioUserId String
 }
 
+model UserKeys {
+  userKeyId String @id @default(uuid())
+  userEmail String @unique
+  key       String @unique
+}
+
 enum Papel {
   PUBLICADOR
   ADMIN

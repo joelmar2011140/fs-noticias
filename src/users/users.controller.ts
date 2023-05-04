@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { atualizarUmUsuario, eliminarUsuario, listarUmUsuario, listarUsuarios, registarUsuario } from './users.service'
+import { atualizarUmUsuario, eliminarUsuario, listarUmUsuario, listarUsuarios, registarUsuario, registarUsuarioAdmin } from './users.service'
 import { validarAtualizarUsuario, validarRegistarUsuario } from './users.validations'
 import { APIError } from '../utils/error.class'
 
@@ -42,6 +42,32 @@ export async function registarUsuarioHttp (req: Request, res: Response, next: Ne
     })
   } catch (err: any) {
     console.error('Erro em registarUsuarioHttp', err)
+    if (err.name === 'ValidationError') {
+      for (const detalhe of err.details) {
+        next(new APIError('CLIENT_ERROR', detalhe.message, 422))
+      }
+    } if (err.code === 'P2002') {
+      next(new APIError('BAD_REQUEST', 'Já existe uma categoria com este nome', 400))
+    } if (err.name === 'APIError') {
+      next(err)
+    }
+    next(err)
+  }
+}
+
+export async function registarUsuarioAdminHttp (req: Request, res: Response, next: NextFunction): Promise<any> {
+  try {
+    const incomingParsedData = await validarRegistarUsuario.validateAsync(req.body)
+    const data = await registarUsuarioAdmin(incomingParsedData)
+    return res.status(data.retorno.codigo).json({
+      retorno: {
+        codigo: data.retorno.codigo,
+        mensagem: data.retorno.mensagem,
+        data: data.retorno.data
+      }
+    })
+  } catch (err: any) {
+    console.error('Erro em registarUsuarioAdminHttp', err)
     if (err.name === 'ValidationError') {
       for (const detalhe of err.details) {
         next(new APIError('CLIENT_ERROR', detalhe.message, 422))

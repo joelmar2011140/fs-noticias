@@ -25,6 +25,27 @@ export async function registarUsuario (params: IParamsCriarUsuario): Promise<ISu
   }
 }
 
+export async function registarUsuarioAdmin (params: IParamsCriarUsuario): Promise<ISucesso> {
+  const { senha, ...rest } = params
+  const senhaEncriptada = await encriptarSenha(params.senha)
+  const data = await prismaUser.create({ data: { ...rest, senha: senhaEncriptada, papel: 'ADMIN' } })
+  if (data == null) {
+    throw new APIError('APIERROR', 'Não foi possível registar este usuário , tente novamente, se o erro persistir contacte a equipa de suporte', 503)
+  }
+  return {
+    retorno: {
+      codigo: 201,
+      mensagem: 'Usuário registado com sucesso',
+      data: {
+        userId: data.userId,
+        email: data.email,
+        nome: data.nome,
+        papel: data.papel
+      }
+    }
+  }
+}
+
 export async function listarUsuarios (): Promise<ISucesso> {
   const usuarios = await prismaUser.findMany({ where: { papel: 'PUBLICADOR' } })
   if (usuarios.length === 0) {
