@@ -5,4 +5,6 @@ export interface ICriarNoticia {
   conteudo: string
 }
 
-export interface IAtualizarNoticia extends Partial<ICriarNoticia> {}
+export interface IAtualizarNoticia extends Partial<ICriarNoticia> {
+  status?: boolean
+}

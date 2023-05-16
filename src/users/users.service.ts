@@ -98,7 +98,7 @@ export async function listarUmUsuario (userId: string): Promise<ISucesso> {
 
 export async function atualizarUmUsuario (userId: string, params: IParamsAtualizarUsuario): Promise<ISucesso> {
   if (params.senha != null && params.senha.length > 0) {
-    throw new APIError('CLIENT_ERROR', 'Esetja logado para exercer esta funcionalidade', 403)
+    throw new APIError('CLIENT_ERROR', 'Esteja logado para exercer esta funcionalidade', 403)
   }
   const usuarioAtualizado = await prismaUser.update({ where: { userId }, data: { ...params } })
   if (usuarioAtualizado == null) {

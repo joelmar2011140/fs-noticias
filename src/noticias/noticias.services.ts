@@ -49,6 +49,16 @@ export async function registarNoticia (idPublicador: string, params: ICriarNotic
 }
 
 export async function atualizarNoticia (noticiaId: string, params: IAtualizarNoticia): Promise<ISucesso> {
+  if (params.capa != null) {
+    const noticiaAtualizada = await prismaNoticias.update({ where: { noticiaId }, data: { capa: params.capa } })
+    return {
+      retorno: {
+        codigo: 201,
+        mensagem: 'Notícia atualizada com sucesso.',
+        data: noticiaAtualizada
+      }
+    }
+  }
   const noticiaAtualizada = await prismaNoticias.update({ where: { noticiaId }, data: { ...params } })
   if (noticiaAtualizada == null) {
     throw new APIError('UNAVAILABLE', 'Não foi possível atualizar os dados desta notícia ,tente mais tarde por favor ou contacte o adminstrador', 503)

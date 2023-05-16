@@ -77,7 +77,7 @@ export async function eliminarNoticiaHttp (req: Request<any>, res: Response, nex
   }
 }
 
-export async function atualizarNoticiaHttp (req: Request<any>, res: Response, next: NextFunction): Promise<any> {
+export async function atualizarCapaNoticiaHttp (req: Request<any>, res: Response, next: NextFunction): Promise<any> {
   const noticiaId = req.params.noticiaId
   formidableInst.parse(req, async (err: any, fields: any, files: any) => {
     try {
@@ -97,11 +97,8 @@ export async function atualizarNoticiaHttp (req: Request<any>, res: Response, ne
           return res.status(resposta.retorno.codigo).json(resposta)
         }
       }
-      const data = await validarAtualizacaoNoticia.validateAsync(fields)
-      const resposta: any = await atualizarNoticia(noticiaId, data)
-      return res.status(resposta.retorno.codigo).json(resposta)
     } catch (err: any) {
-      console.error('error em atualizarNoticiaHttp ', err)
+      console.error('error em atualizarCapaNoticiaHttp ', err)
       if (files?.capa != null) {
         await deleteImageFromAzure(files.capa.originalFilename)
         deleteFile(files.capa.filepath)
@@ -116,6 +113,31 @@ export async function atualizarNoticiaHttp (req: Request<any>, res: Response, ne
       next(err)
     }
   })
+}
+
+export async function atualizarNoticiaHttp (req: Request<any>, res: Response, next: NextFunction): Promise<any> {
+  try {
+    const estado = req.query.status === 'true'
+    if (estado != null) {
+      const noticiaId = req.params.noticiaId
+      const resposta: any = await atualizarNoticia(noticiaId, { status: estado })
+      return res.status(resposta.retorno.codigo).json(resposta)
+    }
+    const noticiaId = req.params.noticiaId
+    const data = await validarAtualizacaoNoticia.validateAsync(req.body)
+    const resposta: any = await atualizarNoticia(noticiaId, data)
+    return res.status(resposta.retorno.codigo).json(resposta)
+  } catch (err: any) {
+    console.error('error em atualizarNoticiaHttp ', err)
+    if (err.name === 'ValidationError') {
+      for (const detalhe of err.details) {
+        next(new APIError('CLIENT_ERROR', detalhe.message, 400))
+      }
+    } if (err.name === 'APIError') {
+      next(err)
+    }
+    next(err)
+  }
 }
 
 export async function registarNoticiaHttp (req: any, res: Response, next: NextFunction): Promise<any> {
